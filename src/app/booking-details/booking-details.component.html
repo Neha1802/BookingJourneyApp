@@ -1,0 +1,340 @@
+<div class="parent-container">
+  <div class="booking-box">
+    <img class="flag-icon" src="uk-flag.svg" />
+
+    <span>EN</span>
+  </div>
+</div>
+<!-- select ride type -->
+<div class="step-container">
+  <div class="step">
+    <div class="circle first">1</div>
+    <div class="label">Booking Details</div>
+  </div>
+  <div class="line line-1-2"></div>
+  <div class="step">
+    <div class="circle">2</div>
+    <div class="label">Payment Details</div>
+  </div>
+  <div class="line line-2-3"></div>
+  <div class="step">
+    <div class="circle">3</div>
+    <div class="label">Confirmation</div>
+  </div>
+</div>
+
+<!-- journey details & summary  -->
+<div class="box-container">
+  <div class="box">
+    <div class="box-content">
+      <div class="box-header">
+        <h2>Journey Details</h2>
+      </div>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="booking-type" value="one-way" checked />
+          <span class="radio-circle"></span>
+          <span class="radio-text">One Way</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="booking-type" value="airport-pickup" />
+          <span class="radio-circle"></span>
+          <span class="radio-text">Airport Pickup</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="booking-type" value="hourly" />
+          <span class="radio-circle"></span>
+          <span class="radio-text">Hourly</span>
+        </label>
+      </div>
+      <div class="address-container">
+        <div class="address-text">
+          <label class="label">Pickup Address</label>
+        </div>
+        <div class="address-field">
+          <span class="icon">
+            <i class="fas fa-location-dot"></i>
+          </span>
+          <input
+            type="text"
+            id="pickup-address"
+            placeholder="Enter Pickup Address"
+          />
+        </div>
+        <div class="address-text">
+          <label class="label">Dropoff Address</label>
+        </div>
+        <div class="address-field">
+          <span class="icon">
+            <i class="fas fa-location-dot"></i>
+          </span>
+          <input
+            type="text"
+            id="drop-address"
+            placeholder="Enter Drop Address"
+          />
+        </div>
+      </div>
+      <form [formGroup]="bookingForm">
+        <div class="datetime-container">
+          <!-- Date Picker -->
+          <div class="dateTime">
+            <label class="label">Select Date</label>
+            <div class="datetime-field">
+              <mat-form-field appearance="fill" class="custom-form-field">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  formControlName="selectedDate"
+                  [matDatepickerFilter]="dateFilter"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error
+                  *ngIf="bookingForm.get('selectedDate')?.hasError('required')"
+                >
+                  Date is required.
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    bookingForm.get('selectedDate')?.hasError('invalidDate')
+                  "
+                >
+                  The selected date cannot be in the past.
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Time Picker -->
+          <div class="dateTime">
+            <label class="label">Select Time</label>
+            <div class="datetime-field">
+              <mat-form-field appearance="fill" class="custom-form-field">
+                <div class="time-picker-wrapper">
+                  <i class="fa-solid fa-clock time-icon"></i>
+                  <input
+                    matInput
+                    [ngxTimepicker]="timePicker"
+                    formControlName="selectedTime"
+                    (ngxTimepickerChange)="onTimeChange($event)"
+                    readonly
+                  />
+                  <button mat-icon-button matSuffix (click)="openTimePicker()">
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                  <ngx-material-timepicker
+                    #timePicker
+                  ></ngx-material-timepicker>
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="box">
+    <div class="box-content">
+      <div class="box-header">
+        <h2>Journey Summary</h2>
+      </div>
+      <div id="map" class="map-container"></div>
+      <div class="booking-details">
+        <span class="booking-label"> Booking Date & Time: </span>
+        <span class="booking-info">
+          {{ selectedDate | date: "dd/MM/yyyy" }},
+          {{ selectedTime }}
+        </span>
+      </div>
+      <div><span class="booking-label"> Distance/Duration</span></div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="box-content">
+      <div class="box-header">
+        <h2>Journey Details</h2>
+      </div>
+      <div class="radio-groupP">
+        <label class="radio-optionP">
+          <input type="radio" name="nameP" value="myself" checked />
+          <span class="radio-circle"></span>
+          <span class="radio-text"> Booking For Myself </span>
+        </label>
+        <label class="radio-optionP">
+          <input type="radio" name="nameP" value="someone" />
+          <span class="radio-circle"></span>
+          <span class="radio-text"> Booking For Someone else </span>
+        </label>
+      </div>
+      <div class="pName">
+        <div class="passenger-container">
+          <div class="pDetails">
+            <label class="label">
+              First Name <span class="required-asterisk">* </span></label
+            >
+            <input type="text" [(ngModel)]="fName" />
+          </div>
+
+          <div class="pDetails">
+            <label class="label">
+              Last Name <span class="required-asterisk">* </span></label
+            >
+            <input type="text" [(ngModel)]="lName" />
+          </div>
+        </div>
+      </div>
+      <div class="passDetails">
+        <label class="labels"
+          >Mobile Number <span class="required-asterisk">*</span></label
+        >
+        <input #phoneInput type="tel" id="phone" [(ngModel)]="phoneNumber" />
+      </div>
+      <div class="passDetails">
+        <label class="labels"
+          >Email Address <span class="required-asterisk">*</span></label
+        >
+        <input
+          type="email"
+          [(ngModel)]="emailAddress"
+          #email="ngModel"
+          required
+          email
+          id="emailInput"
+        />
+        <div *ngIf="email.invalid && (email.dirty || email.touched)">
+          <small *ngIf="email.errors?.['required']">Email is required.</small>
+          <small *ngIf="email.errors?.['email']"
+            >Please enter a valid email.</small
+          >
+        </div>
+      </div>
+      <!-- Passengers and Luggage -->
+      <div class="passenger-luggage">
+        <div class="field-group">
+          <label class="labels">Passengers</label>
+          <div class="colSpan">
+            <span class="textColor"
+              ><i class="fas fa-person marginIcon"></i>Adult</span
+            >
+            <span class="counter">
+              <button (click)="decreasePassengers()">-</button>
+              <span>{{ passengers }}</span>
+              <button (click)="increasePassengers()">+</button>
+            </span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="labels">Luggage</label>
+          <div class="colSpan">
+            <span class="textColor"
+              ><i class="fas fa-suitcase-rolling marginIcon"></i>Big
+              Luggage</span
+            >
+            <span class="counter">
+              <button (click)="decreaseLuggage()">-</button>
+              <span>{{ luggage }}</span>
+              <button (click)="increaseLuggage()">+</button>
+            </span>
+          </div>
+          <div class="colSpan">
+            <span class="textColor"
+              ><i class="fas fa-suitcase marginIcon"></i>Small Luggage</span
+            >
+            <span class="counter">
+              <button (click)="decreaseLuggage()">-</button>
+              <span>{{ luggage }}</span>
+              <button (click)="increaseLuggage()">+</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <span class="childSeat">
+          <span class="textColor"
+            ><i class="fas fa-chair marginIcon"></i>Child
+            Seat</span>
+          <button class="btn btn-primary childBtn" (click)="childSEat()">Select</button>
+        </span>
+      <div class="notes">
+        <label class="labels">Note</label>
+        <textarea class="notesText" placeholder="Notes"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="box-content">
+      <div class="box-header">
+        <h2>Available Vehicles</h2>
+      </div>
+      <div class="vehicles">
+        <div class="vehicle-card">
+          <img src="eClass.jpg" alt="Mercedes Car 1" class="vehicle-image" />
+          <div class="vehicle-details">
+            <label class="car-name">Mercedes Benz E-Class</label>
+            <p class="car-class">Buisness Class</p>
+            <div class="icons-row">
+              <span><i class="fa-solid fa-user-group m-2"></i> X 3</span>
+              <span><i class="fas fa-chair m-2"></i> X 1</span>
+              <span><i class="fa-solid fa-briefcase m-2"></i> X 1</span>
+            </div>
+          </div>
+        </div>
+        <div class="vehicle-card">
+          <img src="bmw.jpg" class="vehicle-image" />
+          <div class="vehicle-details">
+            <label class="car-name">BMW</label>
+            <p class="car-class">First Class</p>
+            <div class="icons-row">
+              <span><i class="fa-solid fa-user-group m-2"></i> X 3</span>
+              <span><i class="fas fa-chair m-2"></i> X 3</span>
+              <span><i class="fa-solid fa-briefcase m-2"></i> X 1</span>
+            </div>
+          </div>
+        </div>
+        <div class="vehicle-card">
+          <img src="Essai.jpg" class="vehicle-image" />
+          <div class="vehicle-details">
+            <label class="car-name">Mercedes Benz</label>
+            <p class="car-class">Luxury Sedan</p>
+            <div class="icons-row">
+              <span><i class="fa-solid fa-user-group m-2"></i> X 1</span>
+              <span><i class="fas fa-chair m-2"></i> X 2</span>
+              <span><i class="fa-solid fa-briefcase m-2"></i> X 3</span>
+            </div>
+          </div>
+        </div>
+        <div class="vehicle-card">
+          <img src="m-s-class.jpg" class="vehicle-image" />
+          <div class="vehicle-details">
+            <label class="car-name">Mercedes Benz S-Class</label>
+            <p class="car-class">First Class</p>
+            <div class="icons-row">
+              <span><i class="fa-solid fa-user-group m-2"></i> X 1</span>
+              <span><i class="fas fa-chair m-2"></i> X 2</span>
+              <span><i class="fa-solid fa-briefcase m-2"></i> X 3</span>
+            </div>
+          </div>
+        </div>
+        <div class="vehicle-card">
+          <img src="m-s.jpg" class="vehicle-image" />
+          <div class="vehicle-details">
+            <label class="car-name">Mercedes S</label>
+            <p class="car-class">Luxury Sedan</p>
+            <div class="icons-row">
+              <span><i class="fa-solid fa-user-group m-1"></i> X 3</span>
+              <span><i class="fas fa-chair m-1"></i> X 1</span>
+              <span><i class="fa-solid fa-briefcase m-1"></i> X 1</span>
+            </div>
+          </div>
+        </div>
+        <div class="btn btnProceed">
+          <button class="proceedBtn">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
